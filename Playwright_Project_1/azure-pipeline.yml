@@ -1,3 +1,5 @@
+name: Playwright_Project_1
+
 trigger:
   - main
 
