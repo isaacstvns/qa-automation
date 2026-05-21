@@ -1,0 +1,43 @@
+trigger: none  # Don't trigger on direct pushes
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Playwright_Project_2/*
+
+pool:
+  name: Default
+  demands:
+    - agent.name -equals Linux-Mint
+
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '22.x'
+
+  - script: npm ci
+    workingDirectory: Playwright_Project_2
+    displayName: Install dependencies
+
+  #- script: npx playwright install
+  #  workingDirectory: Playwright_Project_2
+  #  displayName: Install Playwright browsers
+
+  - script: npx playwright test
+    workingDirectory: Playwright_Project_2
+    displayName: Run Playwright tests
+
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: Playwright_Project_2/test-results/*.xml
+
+  - task: PublishPipelineArtifact@1
+    condition: always()
+    inputs:
+      targetPath: Playwright_Project_2/playwright-report
+      artifact: playwright-report
