@@ -15,9 +15,9 @@ steps:
     workingDirectory: Playwright_Project_1
     displayName: Install dependencies
 
-  - script: npx playwright install --with-deps
-    workingDirectory: Playwright_Project_1
-    displayName: Install Playwright browsers
+  #- script: npx playwright install --with-deps
+  #  workingDirectory: Playwright_Project_1
+  #  displayName: Install Playwright browsers
 
   - script: npx playwright test
     workingDirectory: Playwright_Project_1
