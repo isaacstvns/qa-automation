@@ -1,4 +1,12 @@
-trigger: none  # Don't trigger on direct pushes
+name: Playwright_Project_2
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Playwright_Project_2/*
 
 pr:
   branches:
