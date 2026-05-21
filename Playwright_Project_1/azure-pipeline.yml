@@ -1,52 +1,36 @@
 trigger:
-  branches:
-    include:
-      - main
+  - main
 
 pool:
   name: Default
   demands:
     - agent.name -equals Linux-Mint
 
-variables:
-  NODE_VERSION: '22.x'
+steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '22.x'
 
-stages:
-  - stage: Test
-    displayName: 'Playwright Tests'
-    jobs:
-      - job: RunTests
-        displayName: 'Run Playwright Tests'
-        timeoutInMinutes: 60
-        steps:
+  - script: npm ci
+    workingDirectory: Playwright_Project_1
+    displayName: Install dependencies
 
-          - task: UseNode@0
-            displayName: 'Use Node.js 22'
-            inputs:
-              versionSpec: $(NODE_VERSION)
+  - script: npx playwright install --with-deps
+    workingDirectory: Playwright_Project_1
+    displayName: Install Playwright browsers
 
-          - script: npm ci
-            displayName: 'Install dependencies'
+  - script: npx playwright test
+    workingDirectory: Playwright_Project_1
+    displayName: Run Playwright tests
 
-          - script: npx playwright install
-            displayName: 'Install Playwright browsers'
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: Playwright_Project_1/test-results/*.xml
 
-          - script: npx playwright test
-            displayName: 'Run Playwright tests'
-            continueOnError: true
-
-          - task: PublishTestResults@2
-            displayName: 'Publish JUnit results to Azure DevOps'
-            inputs:
-              testResultsFormat: 'JUnit'
-              testResultsFiles: 'test-results/junit.xml'
-              failTaskOnFailedTests: true
-            condition: always()
-
-          - task: PublishPipelineArtifact@1
-            displayName: 'Upload HTML report'
-            inputs:
-              targetPath: playwright-report
-              artifact: playwright-report
-              publishLocation: pipeline
-            condition: always()
+  - task: PublishPipelineArtifact@1
+    condition: always()
+    inputs:
+      targetPath: Playwright_Project_1/playwright-report
+      artifact: playwright-report
