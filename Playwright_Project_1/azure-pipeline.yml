@@ -1,7 +1,20 @@
 name: Playwright_Project_1
 
 trigger:
-  - main
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Playwright_Project_1/*
+
+pr:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - Playwright_Project_1/*
 
 pool:
   name: Default
